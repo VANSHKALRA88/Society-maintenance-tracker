@@ -1,10 +1,6 @@
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
 
-
-
-// Register User
-
 const registerUser = async (req, res) => {
 
     try {
@@ -18,7 +14,6 @@ const registerUser = async (req, res) => {
             role,
         } = req.body;
 
-        // Check required fields
         if (
             !fullName ||
             !email ||
@@ -34,7 +29,6 @@ const registerUser = async (req, res) => {
 
         }
 
-        // Check existing user
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
@@ -90,10 +84,6 @@ const registerUser = async (req, res) => {
     }
 
 };
-
-
-
-// Login User
 
 const loginUser = async (req, res) => {
 

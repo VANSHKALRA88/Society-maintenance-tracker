@@ -1,6 +1,5 @@
 const Society = require("../models/society");
 
-// Create Society
 const createSociety = async (req, res) => {
     try {
 
