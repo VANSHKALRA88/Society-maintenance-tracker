@@ -1,0 +1,27 @@
+{
+  "info": {
+    "_postman_id": "0b85ea9d-63a8-41b2-ad4f-f5cfcc5abaa9",
+    "name": "Complaints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "56344281",
+    "_collection_link": "https://go.postman.co/collection/56344281-0b85ea9d-63a8-41b2-ad4f-f5cfcc5abaa9?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Create Complaint",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Dashboard Report",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
