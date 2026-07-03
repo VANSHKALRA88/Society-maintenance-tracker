@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sanchay — Society Maintenance Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F7FA;
+    --surface:#FFFFFF;
+    --surface-2:#EEF2F5;
+    --border:#E1E7EC;
+    --text:#1F2A33;
+    --text-soft:#5B6B76;
+    --primary:#2C5F7C;
+    --primary-dark:#1E4258;
+    --primary-tint:#E6EEF2;
+    --success:#3F8F5F;
+    --success-tint:#E8F3EC;
+    --warning:#C77A2A;
+    --warning-tint:#FBF0E5;
+    --danger:#B34A4A;
+    --danger-tint:#F8EAEA;
+    --radius:10px;
+    --radius-lg:16px;
+    --shadow:0 1px 2px rgba(31,42,51,0.06), 0 4px 12px rgba(31,42,51,0.05);
+    --shadow-lg:0 8px 24px rgba(31,42,51,0.10), 0 2px 6px rgba(31,42,51,0.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.brand-font{
+    font-family:'Fraunces',Georgia,serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  button{font-family:inherit;cursor:pointer;}
+  input,select,textarea{font-family:inherit;}
+  a{color:inherit;}
+  :focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:11px 20px;border-radius:8px;border:1px solid transparent;
+    font-size:14.5px;font-weight:600;transition:all .15s ease;
+    white-space:nowrap;
+  }
+  .btn-primary{background:var(--primary);color:#fff;}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-ghost{background:transparent;color:var(--text-soft);border-color:var(--border);}
+  .btn-ghost:hover{background:var(--surface-2);color:var(--text);}
+  .btn-outline{background:#fff;color:var(--primary);border-color:var(--primary);}
+  .btn-outline:hover{background:var(--primary-tint);}
+  .btn-danger-ghost{background:transparent;color:var(--danger);border-color:var(--danger);}
+  .btn-danger-ghost:hover{background:var(--danger-tint);}
+  .btn-sm{padding:7px 14px;font-size:13px;border-radius:7px;}
+  .btn-block{width:100%;}
+  .btn:disabled{opacity:.55;cursor:not-allowed;}
+
+  /* ---------- Form elements ---------- */
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--text-soft);margin-bottom:6px;}
+  .field input, .field select, .field textarea{
+    width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:8px;
+    font-size:14.5px;background:#fff;color:var(--text);transition:border-color .15s;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary);}
+  .field textarea{resize:vertical;min-height:80px;}
+  .field-hint{font-size:12.5px;color:var(--text-soft);margin-top:5px;}
+  .field-row{display:flex;gap:12px;}
+  .field-row .field{flex:1;}
+
+  /* ---------- Badges ---------- */
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;}
+  .badge-Pending{background:var(--warning-tint);color:var(--warning);}
+  .badge-Assigned{background:var(--primary-tint);color:var(--primary);}
+  .badge-InProgress{background:var(--primary-tint);color:var(--primary-dark);}
+  .badge-Resolved{background:var(--success-tint);color:var(--success);}
+  .badge-Closed{background:var(--surface-2);color:var(--text-soft);}
+  .badge-Low{background:var(--success-tint);color:var(--success);}
+  .badge-Medium{background:var(--warning-tint);color:var(--warning);}
+  .badge-High{background:#FBEAE0;color:#A8542A;}
+  .badge-Emergency{background:var(--danger-tint);color:var(--danger);}
+  .badge-overdue{background:var(--danger-tint);color:var(--danger);}
+  .badge-role{background:var(--primary-dark);color:#fff;text-transform:capitalize;}
+  .badge-pin{background:var(--warning-tint);color:var(--warning);}
+
+  /* ---------- Layout: Auth screen ---------- */
+  #authScreen{
+    min-height:100vh;display:flex;
+  }
+  .auth-hero{
+    flex:1.1;background:linear-gradient(165deg,var(--primary-dark),var(--primary));
+    position:relative;overflow:hidden;color:#fff;
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:48px;min-height:100vh;
+  }
+  .building-pattern{
+    position:absolute;inset:0;opacity:.16;
+    background-image:
+      repeating-linear-gradient(0deg, transparent 0 34px, rgba(255,255,255,.9) 34px 36px),
+      repeating-linear-gradient(90deg, transparent 0 34px, rgba(255,255,255,.9) 34px 36px);
+    mask-image:linear-gradient(180deg, transparent, black 20%, black 75%, transparent);
+  }
+  .auth-hero-content{position:relative;z-index:1;}
+  .auth-hero-top{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-size:22px;font-weight:600;}
+  .auth-hero-mark{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .auth-hero-bottom{position:relative;z-index:1;max-width:420px;}
+  .auth-hero-bottom h1{font-size:34px;line-height:1.2;margin:0 0 14px;color:#fff;}
+  .auth-hero-bottom p{font-size:15.5px;line-height:1.6;color:rgba(255,255,255,.82);margin:0;}
+  .auth-form-side{
+    flex:1;display:flex;align-items:center;justify-content:center;padding:32px;
+  }
+  .auth-card{width:100%;max-width:380px;}
+  .auth-tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:10px;margin-bottom:28px;}
+  .auth-tab{flex:1;padding:9px;text-align:center;border-radius:7px;font-size:14px;font-weight:600;color:var(--text-soft);background:transparent;border:none;}
+  .auth-tab.active{background:#fff;color:var(--primary-dark);box-shadow:var(--shadow);}
+  .auth-error{background:var(--danger-tint);color:var(--danger);padding:11px 14px;border-radius:8px;font-size:13.5px;margin-bottom:16px;display:none;}
+  .role-toggle{display:flex;gap:8px;margin-bottom:16px;}
+  .role-pill{flex:1;padding:10px;text-align:center;border:1px solid var(--border);border-radius:8px;font-size:13.5px;font-weight:600;color:var(--text-soft);background:#fff;}
+  .role-pill.active{border-color:var(--primary);background:var(--primary-tint);color:var(--primary-dark);}
+
+  /* ---------- Onboarding ---------- */
+  #onboardScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;}
+  .onboard-card{width:100%;max-width:460px;background:var(--surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:36px;}
+  .onboard-step{display:none;}
+  .onboard-step.active{display:block;}
+  .id-box{
+    display:flex;align-items:center;gap:10px;background:var(--surface-2);border:1px dashed var(--border);
+    border-radius:9px;padding:12px 14px;margin:14px 0;
+  }
+  .id-box code{flex:1;font-size:13px;word-break:break-all;color:var(--primary-dark);font-weight:600;}
+  .flat-chip-list{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+  .flat-chip{padding:7px 12px;border-radius:7px;background:var(--surface-2);font-size:13px;font-weight:600;color:var(--text-soft);}
+  .flat-pick{
+    display:block;width:100%;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:8px;
+    background:#fff;margin-bottom:8px;font-size:14px;font-weight:600;
+  }
+  .flat-pick:hover{border-color:var(--primary);background:var(--primary-tint);}
+  .flat-pick.selected{border-color:var(--primary);background:var(--primary-tint);color:var(--primary-dark);}
+  .flat-pick small{display:block;font-weight:400;color:var(--text-soft);margin-top:2px;}
+
+  /* ---------- App shell ---------- */
+  #appShell{display:none;min-height:100vh;}
+  .sidebar{
+    width:236px;background:var(--primary-dark);color:#fff;min-height:100vh;
+    display:flex;flex-direction:column;padding:22px 16px;position:fixed;top:0;left:0;bottom:0;
+  }
+  .sidebar-brand{display:flex;align-items:center;gap:10px;padding:6px 8px 26px;font-family:'Fraunces',serif;font-size:19px;font-weight:600;}
+  .sidebar-brand-mark{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+  .nav-item{
+    display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:8px;
+    color:rgba(255,255,255,.72);font-size:14px;font-weight:500;margin-bottom:2px;
+    background:transparent;border:none;width:100%;text-align:left;
+  }
+  .nav-item:hover{background:rgba(255,255,255,.08);color:#fff;}
+  .nav-item.active{background:rgba(255,255,255,.14);color:#fff;font-weight:600;}
+  .nav-ico{width:18px;text-align:center;flex-shrink:0;}
+  .sidebar-spacer{flex:1;}
+  .sidebar-society{
+    padding:12px;background:rgba(255,255,255,.07);border-radius:9px;font-size:12.5px;color:rgba(255,255,255,.65);margin-bottom:10px;
+  }
+  .sidebar-society b{display:block;color:#fff;font-size:13.5px;margin-bottom:2px;font-weight:600;}
+
+  .main-area{margin-left:236px;flex:1;min-height:100vh;}
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;padding:18px 32px;
+    background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;
+  }
+  .topbar h2{margin:0;font-size:20px;}
+  .topbar-right{display:flex;align-items:center;gap:14px;}
+  .user-chip{display:flex;align-items:center;gap:10px;}
+  .avatar{width:34px;height:34px;border-radius:50%;background:var(--primary-tint);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13.5px;}
+  .content{padding:28px 32px 60px;max-width:1180px;}
+  .view{display:none;}
+  .view.active{display:block;}
+
+  /* ---------- Cards / stats ---------- */
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
+  .stat-card .num{font-family:'Fraunces',serif;font-size:30px;font-weight:600;line-height:1;margin-bottom:6px;}
+  .stat-card .lbl{font-size:12.5px;color:var(--text-soft);font-weight:600;text-transform:uppercase;letter-spacing:.03em;}
+  .stat-card.accent-warning .num{color:var(--warning);}
+  .stat-card.accent-danger .num{color:var(--danger);}
+  .stat-card.accent-success .num{color:var(--success);}
+
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);}
+  .panel-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);}
+  .panel-header h3{margin:0;font-size:16.5px;}
+  .filters{display:flex;gap:10px;padding:16px 22px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  .filters select{padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-size:13px;background:#fff;}
+
+  .complaint-row{border-bottom:1px solid var(--border);padding:16px 22px;}
+  .complaint-row:last-child{border-bottom:none;}
+  .complaint-row.overdue{background:var(--danger-tint);}
+  .complaint-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+  .complaint-title{font-weight:600;font-size:15px;margin-bottom:4px;}
+  .complaint-meta{font-size:12.5px;color:var(--text-soft);}
+  .complaint-desc{font-size:13.5px;color:var(--text-soft);margin-top:6px;line-height:1.5;}
+  .complaint-badges{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+  .complaint-actions{display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap;}
+  .toggle-history{background:none;border:none;color:var(--primary);font-size:13px;font-weight:600;padding:0;margin-top:10px;}
+  .history-panel{display:none;margin-top:12px;padding:14px;background:var(--surface-2);border-radius:8px;}
+  .history-panel.open{display:block;}
+  .history-item{display:flex;gap:10px;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border);}
+  .history-item:last-child{border-bottom:none;}
+  .history-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);margin-top:5px;flex-shrink:0;}
+  .history-item b{font-weight:600;}
+  .history-item .hmeta{color:var(--text-soft);font-size:12px;}
+  .status-update-row{display:flex;gap:8px;align-items:center;padding-top:10px;flex-wrap:wrap;}
+  .status-update-row select, .status-update-row input{padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-size:13px;}
+  .photo-thumb{width:46px;height:46px;border-radius:7px;object-fit:cover;border:1px solid var(--border);}
+
+  .notice-item{padding:18px 22px;border-bottom:1px solid var(--border);}
+  .notice-item:last-child{border-bottom:none;}
+  .notice-item.important{background:var(--warning-tint);}
+  .notice-title{font-weight:600;font-size:15px;margin-bottom:5px;display:flex;align-items:center;gap:8px;}
+  .notice-desc{font-size:13.5px;color:var(--text-soft);line-height:1.55;}
+  .notice-meta{font-size:12px;color:var(--text-soft);margin-top:8px;}
+
+  .empty-state{padding:56px 24px;text-align:center;color:var(--text-soft);}
+  .empty-state .ico{font-size:34px;margin-bottom:12px;}
+  .empty-state h4{margin:0 0 6px;color:var(--text);font-size:16px;}
+  .empty-state p{margin:0 0 18px;font-size:13.5px;}
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop{
+    display:none;position:fixed;inset:0;background:rgba(20,28,34,.45);z-index:100;
+    align-items:center;justify-content:center;padding:24px;
+  }
+  .modal-backdrop.open{display:flex;}
+  .modal{background:#fff;border-radius:var(--radius-lg);max-width:480px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
+  .modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border);}
+  .modal-header h3{margin:0;font-size:17px;}
+  .modal-close{background:none;border:none;font-size:20px;color:var(--text-soft);line-height:1;}
+  .modal-body{padding:22px 24px;}
+  .modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+
+  .toast{
+    position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:13px 20px;border-radius:9px;
+    font-size:13.5px;font-weight:500;box-shadow:var(--shadow-lg);z-index:200;display:none;max-width:340px;
+  }
+  .toast.error{background:var(--danger);}
+  .toast.success{background:var(--success);}
+
+  .mini-list{margin:14px 0;max-height:160px;overflow-y:auto;}
+  .mini-list-item{display:flex;justify-content:space-between;padding:8px 10px;background:var(--surface-2);border-radius:6px;font-size:13px;margin-bottom:6px;}
+
+  @media (max-width:820px){
+    .auth-hero{display:none;}
+    .sidebar{position:fixed;transform:translateX(-100%);transition:transform .2s;z-index:50;}
+    .sidebar.open{transform:translateX(0);}
+    .main-area{margin-left:0;}
+    .topbar{padding:16px;}
+    .content{padding:20px 16px 60px;}
+    .field-row{flex-direction:column;gap:0;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ AUTH SCREEN ============ -->
+<div id="authScreen">
+  <div class="auth-hero">
+    <div class="building-pattern"></div>
+    <div class="auth-hero-content">
+      <div class="auth-hero-top">
+        <div class="auth-hero-mark">🏘️</div>
+        Sanchay
+      </div>
+    </div>
+    <div class="auth-hero-bottom">
+      <h1>Every complaint, tracked. Every resident, informed.</h1>
+      <p>Sanchay keeps your society's maintenance requests organised — from the moment a resident raises an issue to the moment it's resolved, with a clear record every step of the way.</p>
+    </div>
+  </div>
+  <div class="auth-form-side">
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Log in</button>
+        <button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Create account</button>
+      </div>
+      <div class="auth-error" id="authError"></div>
+
+      <!-- LOGIN -->
+      <form id="loginForm" onsubmit="return handleLogin(event)">
+        <div class="field">
+          <label>Email address</label>
+          <input type="email" id="loginEmail" required placeholder="you@example.com" />
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••" />
+        </div>
+        <button class="btn btn-primary btn-block" type="submit" id="loginBtn">Log in</button>
+      </form>
+
+      <!-- REGISTER -->
+      <form id="registerForm" style="display:none" onsubmit="return handleRegister(event)">
+        <div class="role-toggle">
+          <button type="button" class="role-pill active" data-role="resident" onclick="setRegRole('resident')">I'm a resident</button>
+          <button type="button" class="role-pill" data-role="admin" onclick="setRegRole('admin')">I manage the society</button>
+        </div>
+        <div class="field">
+          <label>Full name</label>
+          <input type="text" id="regName" required placeholder="Anjali Sharma" />
+        </div>
+        <div class="field">
+          <label>Email address</label>
+          <input type="email" id="regEmail" required placeholder="you@example.com" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Phone number</label>
+            <input type="tel" id="regPhone" required placeholder="98765 43210" />
+          </div>
+          <div class="field">
+            <label>Flat / house no.</label>
+            <input type="text" id="regFlat" required placeholder="B-204" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="regPassword" required minlength="6" placeholder="At least 6 characters" />
+        </div>
+        <button class="btn btn-primary btn-block" type="submit" id="registerBtn">Create account</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ONBOARDING ============ -->
+<div id="onboardScreen">
+  <div class="onboard-card">
+
+    <!-- Admin: create society -->
+    <div class="onboard-step" id="stepAdminSociety">
+      <h3 style="margin-top:0">Set up your society</h3>
+      <p style="color:var(--text-soft);font-size:13.5px;margin-top:-6px">This creates the record every complaint, flat and notice will belong to.</p>
+      <div class="field"><label>Society name</label><input id="socName" placeholder="Green Valley Residency" /></div>
+      <div class="field-row">
+        <div class="field"><label>City</label><input id="socCity" placeholder="Kanpur" /></div>
+        <div class="field"><label>State</label><input id="socState" placeholder="Uttar Pradesh" /></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Pincode</label><input id="socPincode" placeholder="208001" /></div>
+        <div class="field"><label>Total blocks</label><input id="socBlocks" type="number" min="1" value="1" /></div>
+      </div>
+      <div class="field"><label>Address</label><input id="socAddress" placeholder="Street, area" /></div>
+      <button class="btn btn-primary btn-block" onclick="createSociety()" id="createSocietyBtn">Create society</button>
+    </div>
+
+    <!-- Admin: add flats -->
+    <div class="onboard-step" id="stepAdminFlats">
+      <h3 style="margin-top:0">Add flats</h3>
+      <p style="color:var(--text-soft);font-size:13.5px;margin-top:-6px">Add at least one flat so residents can join. You can add more later from the dashboard.</p>
+      <div class="id-box">
+        <span>🔑</span>
+        <code id="societyIdDisplay"></code>
+        <button class="btn btn-ghost btn-sm" onclick="copySocietyId()">Copy</button>
+      </div>
+      <p class="field-hint" style="margin-top:-8px;margin-bottom:16px">Share this Society ID with your residents — they'll need it to join.</p>
+      <div class="field-row">
+        <div class="field"><label>Block</label><input id="flatBlock" placeholder="A" /></div>
+        <div class="field"><label>Flat no.</label><input id="flatNumber" placeholder="204" /></div>
+        <div class="field"><label>Floor</label><input id="flatFloor" type="number" min="0" placeholder="2" /></div>
+      </div>
+      <button class="btn btn-outline btn-block" onclick="addFlatOnboard()">+ Add flat</button>
+      <div class="mini-list" id="onboardFlatList"></div>
+      <button class="btn btn-primary btn-block" style="margin-top:10px" onclick="finishOnboarding()">Continue to dashboard</button>
+    </div>
+
+    <!-- Resident: join society -->
+    <div class="onboard-step" id="stepResidentJoin">
+      <h3 style="margin-top:0">Join your society</h3>
+      <p style="color:var(--text-soft);font-size:13.5px;margin-top:-6px">Enter the Society ID shared by your society admin.</p>
+      <div class="field"><label>Society ID</label><input id="joinSocietyId" placeholder="Paste the ID here" /></div>
+      <button class="btn btn-primary btn-block" onclick="findSocietyFlats()" id="findFlatsBtn">Find my flat</button>
+    </div>
+
+    <!-- Resident: pick flat -->
+    <div class="onboard-step" id="stepResidentFlat">
+      <h3 style="margin-top:0">Which flat is yours?</h3>
+      <p style="color:var(--text-soft);font-size:13.5px;margin-top:-6px" id="residentSocietyName"></p>
+      <div id="residentFlatPicks"></div>
+      <button class="btn btn-primary btn-block" style="margin-top:10px" onclick="finishOnboarding()" id="confirmFlatBtn" disabled>Continue to dashboard</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ APP SHELL ============ -->
+<div id="appShell">
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-brand"><div class="sidebar-brand-mark">🏘️</div>Sanchay</div>
+    <button class="nav-item active" data-view="dashboardView" id="navDashboard" onclick="showView('dashboardView','navDashboard')" style="display:none">
+      <span class="nav-ico">📊</span> Dashboard
+    </button>
+    <button class="nav-item" data-view="complaintsView" onclick="showView('complaintsView',this.id)" id="navComplaints">
+      <span class="nav-ico">🛠️</span> <span id="navComplaintsLabel">Complaints</span>
+    </button>
+    <button class="nav-item" data-view="noticesView" onclick="showView('noticesView',this.id)" id="navNotices">
+      <span class="nav-ico">📋</span> Notice board
+    </button>
+    <button class="nav-item" data-view="flatsView" id="navFlats" onclick="showView('flatsView',this.id)" style="display:none">
+      <span class="nav-ico">🏢</span> Flats
+    </button>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-society" id="sidebarSociety"></div>
+    <button class="nav-item" onclick="logout()"><span class="nav-ico">↩</span> Log out</button>
+  </div>
+
+  <div class="main-area">
+    <div class="topbar">
+      <h2 id="topbarTitle">Dashboard</h2>
+      <div class="topbar-right">
+        <div class="user-chip">
+          <div class="avatar" id="userAvatar">?</div>
+          <div>
+            <div style="font-size:13.5px;font-weight:600" id="userName">—</div>
+            <span class="badge badge-role" id="userRoleBadge">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD (admin) -->
+      <div class="view" id="dashboardView">
+        <div class="stat-grid" id="statGrid"></div>
+        <div class="panel">
+          <div class="panel-header"><h3>Recent complaints</h3><button class="btn btn-ghost btn-sm" onclick="showView('complaintsView','navComplaints')">View all →</button></div>
+          <div id="recentComplaints"></div>
+        </div>
+      </div>
+
+      <!-- COMPLAINTS -->
+      <div class="view active" id="complaintsView">
+        <div class="panel">
+          <div class="panel-header">
+            <h3 id="complaintsPanelTitle">Complaints</h3>
+            <button class="btn btn-primary btn-sm" id="raiseComplaintBtn" onclick="openComplaintModal()">+ Raise complaint</button>
+          </div>
+          <div class="filters" id="adminFilters" style="display:none">
+            <select id="filterStatus" onchange="renderComplaints()">
+              <option value="">All statuses</option>
+              <option>Pending</option><option>Assigned</option><option>In Progress</option><option>Resolved</option><option>Closed</option>
+            </select>
+            <select id="filterPriority" onchange="renderComplaints()">
+              <option value="">All priorities</option>
+              <option>Low</option><option>Medium</option><option>High</option><option>Emergency</option>
+            </select>
+            <select id="filterOverdue" onchange="renderComplaints()">
+              <option value="">All complaints</option>
+              <option value="yes">Overdue only</option>
+            </select>
+          </div>
+          <div id="complaintsList"></div>
+        </div>
+      </div>
+
+      <!-- NOTICES -->
+      <div class="view" id="noticesView">
+        <div class="panel" id="noticeCreatePanel" style="margin-bottom:20px;display:none">
+          <div class="panel-header"><h3>Post a notice</h3></div>
+          <div style="padding:20px 22px">
+            <div class="field"><label>Title</label><input id="noticeTitle" placeholder="Water supply maintenance on Sunday" /></div>
+            <div class="field"><label>Description</label><textarea id="noticeDesc" placeholder="Details residents should know..."></textarea></div>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--text-soft);margin-bottom:14px">
+              <input type="checkbox" id="noticeImportant" style="width:auto" /> Mark as important (pins to top, emails residents)
+            </label>
+            <button class="btn btn-primary" onclick="postNotice()" id="postNoticeBtn">Post notice</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><h3>Notice board</h3></div>
+          <div id="noticesList"></div>
+        </div>
+      </div>
+
+      <!-- FLATS (admin) -->
+      <div class="view" id="flatsView">
+        <div class="panel" style="margin-bottom:20px">
+          <div class="panel-header"><h3>Add a flat</h3></div>
+          <div style="padding:20px 22px">
+            <div class="field-row">
+              <div class="field"><label>Block</label><input id="mgFlatBlock" placeholder="A" /></div>
+              <div class="field"><label>Flat no.</label><input id="mgFlatNumber" placeholder="204" /></div>
+              <div class="field"><label>Floor</label><input id="mgFlatFloor" type="number" min="0" placeholder="2" /></div>
+            </div>
+            <button class="btn btn-primary" onclick="addFlatManage()">+ Add flat</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><h3>All flats</h3></div>
+          <div id="flatsList"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============ RAISE COMPLAINT MODAL ============ -->
+<div class="modal-backdrop" id="complaintModal">
+  <div class="modal">
+    <div class="modal-header"><h3>Raise a complaint</h3><button class="modal-close" onclick="closeComplaintModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Title</label><input id="cTitle" placeholder="Leaking pipe in parking area" /></div>
+      <div class="field"><label>Description</label><textarea id="cDesc" placeholder="Describe the issue in detail..."></textarea></div>
+      <div class="field-row">
+        <div class="field">
+          <label>Priority</label>
+          <select id="cPriority"><option>Low</option><option selected>Medium</option><option>High</option><option>Emergency</option></select>
+        </div>
+        <div class="field"><label>Due date (optional)</label><input id="cDueDate" type="date" /></div>
+      </div>
+      <div class="field"><label>Photo (optional)</label><input id="cPhoto" type="file" accept="image/*" /></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeComplaintModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitComplaint()" id="submitComplaintBtn">Submit complaint</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   CONFIG — change this if you host the backend elsewhere
+   ============================================================ */
+const API_BASE = "https://society-maintenance-tracker-jgmu.onrender.com/api";
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let state = {
+  token: localStorage.getItem('st_token') || null,
+  user: JSON.parse(localStorage.getItem('st_user') || 'null'),
+  societyId: localStorage.getItem('st_societyId') || null,
+  societyName: localStorage.getItem('st_societyName') || null,
+  flatId: localStorage.getItem('st_flatId') || null,
+  flatLabel: localStorage.getItem('st_flatLabel') || null,
+};
+let regRole = 'resident';
+let onboardFlats = [];
+let pickedFlat = null;
+let complaints = [];
+let notices = [];
+let flats = [];
+let expandedHistory = {};
+
+function saveState(){
+  if(state.token) localStorage.setItem('st_token', state.token); else localStorage.removeItem('st_token');
+  if(state.user) localStorage.setItem('st_user', JSON.stringify(state.user)); else localStorage.removeItem('st_user');
+  if(state.societyId) localStorage.setItem('st_societyId', state.societyId); else localStorage.removeItem('st_societyId');
+  if(state.societyName) localStorage.setItem('st_societyName', state.societyName); else localStorage.removeItem('st_societyName');
+  if(state.flatId) localStorage.setItem('st_flatId', state.flatId); else localStorage.removeItem('st_flatId');
+  if(state.flatLabel) localStorage.setItem('st_flatLabel', state.flatLabel); else localStorage.removeItem('st_flatLabel');
+}
+
+/* ============================================================
+   API HELPER
+   ============================================================ */
+async function api(path, { method='GET', body=null, isForm=false } = {}){
+  const headers = {};
+  if(state.token) headers['Authorization'] = 'Bearer ' + state.token;
+  if(!isForm && body) headers['Content-Type'] = 'application/json';
+  const res = await fetch(API_BASE + path, {
+    method,
+    headers,
+    body: isForm ? body : (body ? JSON.stringify(body) : undefined),
+  });
+  let data;
+  try { data = await res.json(); } catch(e){ data = {}; }
+  if(res.status === 401){
+    toast('Your session expired — please log in again.', 'error');
+    logout();
+    throw new Error('Unauthorized');
+  }
+  if(!res.ok || data.success === false){
+    throw new Error(data.message || 'Something went wrong. Please try again.');
+  }
+  return data;
+}
+
+function toast(msg, type=''){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type;
+  t.style.display = 'block';
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=> t.style.display = 'none', 3400);
+}
+
+/* ============================================================
+   AUTH SCREEN
+   ============================================================ */
+function switchAuthTab(tab){
+  document.getElementById('tabLogin').classList.toggle('active', tab==='login');
+  document.getElementById('tabRegister').classList.toggle('active', tab==='register');
+  document.getElementById('loginForm').style.display = tab==='login' ? 'block' : 'none';
+  document.getElementById('registerForm').style.display = tab==='register' ? 'block' : 'none';
+  hideAuthError();
+}
+function setRegRole(role){
+  regRole = role;
+  document.querySelectorAll('.role-pill').forEach(p => p.classList.toggle('active', p.dataset.role === role));
+}
+function showAuthError(msg){
+  const e = document.getElementById('authError');
+  e.textContent = msg; e.style.display = 'block';
+}
+function hideAuthError(){ document.getElementById('authError').style.display = 'none'; }
+
+async function handleLogin(ev){
+  ev.preventDefault();
+  hideAuthError();
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = 'Logging in…';
+  try{
+    const data = await api('/auth/login', { method:'POST', body:{
+      email: document.getElementById('loginEmail').value.trim(),
+      password: document.getElementById('loginPassword').value,
+    }});
+    state.token = data.token;
+    state.user = data.user;
+    saveState();
+    await afterAuth();
+  }catch(err){
+    showAuthError(err.message);
+  }finally{
+    btn.disabled = false; btn.textContent = 'Log in';
+  }
+  return false;
+}
+
+async function handleRegister(ev){
+  ev.preventDefault();
+  hideAuthError();
+  const btn = document.getElementById('registerBtn');
+  btn.disabled = true; btn.textContent = 'Creating account…';
+  try{
+    const data = await api('/auth/register', { method:'POST', body:{
+      fullName: document.getElementById('regName').value.trim(),
+      email: document.getElementById('regEmail').value.trim(),
+      phone: document.getElementById('regPhone').value.trim(),
+      flatNumber: document.getElementById('regFlat').value.trim(),
+      password: document.getElementById('regPassword').value,
+      role: regRole,
+    }});
+    state.token = data.token;
+    state.user = data.user;
+    saveState();
+    await afterAuth();
+  }catch(err){
+    showAuthError(err.message);
+  }finally{
+    btn.disabled = false; btn.textContent = 'Create account';
+  }
+  return false;
+}
+
+function logout(){
+  state = { token:null, user:null, societyId:null, societyName:null, flatId:null, flatLabel:null };
+  saveState();
+  document.getElementById('appShell').style.display = 'none';
+  document.getElementById('onboardScreen').style.display = 'none';
+  document.getElementById('authScreen').style.display = 'flex';
+  document.getElementById('loginForm').reset();
+}
+
+/* ============================================================
+   ROUTING AFTER LOGIN
+   ============================================================ */
+async function afterAuth(){
+  document.getElementById('authScreen').style.display = 'none';
+  if(state.societyId && (state.user.role === 'admin' || state.flatId)){
+    enterApp();
+  } else {
+    document.getElementById('onboardScreen').style.display = 'flex';
+    if(state.user.role === 'admin'){
+      showOnboardStep(state.societyId ? 'stepAdminFlats' : 'stepAdminSociety');
+      if(state.societyId){ document.getElementById('societyIdDisplay').textContent = state.societyId; loadOnboardFlats(); }
+    } else {
+      showOnboardStep('stepResidentJoin');
+    }
+  }
+}
+function showOnboardStep(id){
+  document.querySelectorAll('.onboard-step').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ---- Admin onboarding ---- */
+async function createSociety(){
+  const btn = document.getElementById('createSocietyBtn');
+  btn.disabled = true; btn.textContent = 'Creating…';
+  try{
+    const data = await api('/society/create', { method:'POST', body:{
+      societyName: document.getElementById('socName').value.trim(),
+      address: document.getElementById('socAddress').value.trim(),
+      city: document.getElementById('socCity').value.trim(),
+      state: document.getElementById('socState').value.trim(),
+      pincode: document.getElementById('socPincode').value.trim(),
+      totalBlocks: Number(document.getElementById('socBlocks').value) || 1,
+    }});
+    state.societyId = data.society._id;
+    state.societyName = data.society.societyName;
+    saveState();
+    document.getElementById('societyIdDisplay').textContent = state.societyId;
+    showOnboardStep('stepAdminFlats');
+  }catch(err){ toast(err.message, 'error'); }
+  finally{ btn.disabled = false; btn.textContent = 'Create society'; }
+}
+function copySocietyId(){
+  navigator.clipboard.writeText(state.societyId);
+  toast('Society ID copied — share it with your residents.', 'success');
+}
+async function addFlatOnboard(){
+  const block = document.getElementById('flatBlock').value.trim();
+  const flatNumber = document.getElementById('flatNumber').value.trim();
+  const floor = document.getElementById('flatFloor').value;
+  if(!block || !flatNumber || floor===''){ toast('Fill in block, flat number and floor.', 'error'); return; }
+  try{
+    await api('/flats/create', { method:'POST', body:{ block, flatNumber, floor:Number(floor), societyId: state.societyId }});
+    document.getElementById('flatBlock').value='';
+    document.getElementById('flatNumber').value='';
+    document.getElementById('flatFloor').value='';
+    toast('Flat added.', 'success');
+    loadOnboardFlats();
+  }catch(err){ toast(err.message, 'error'); }
+}
+async function loadOnboardFlats(){
+  try{
+    const data = await api('/flats/' + state.societyId);
+    onboardFlats = data.flats;
+    const list = document.getElementById('onboardFlatList');
+    list.innerHTML = onboardFlats.map(f => `<div class="mini-list-item"><span>${esc(f.block)}-${esc(f.flatNumber)}</span><span style="color:var(--text-soft)">Floor ${f.floor}</span></div>`).join('') || '<div class="field-hint">No flats added yet.</div>';
+  }catch(err){ /* silent */ }
+}
+
+/* ---- Resident onboarding ---- */
+async function findSocietyFlats(){
+  const id = document.getElementById('joinSocietyId').value.trim();
+  if(!id){ toast('Enter your Society ID.', 'error'); return; }
+  const btn = document.getElementById('findFlatsBtn');
+  btn.disabled = true; btn.textContent = 'Looking…';
+  try{
+    const data = await api('/flats/' + id);
+    if(!data.flats.length){ toast('No flats found for this society yet — ask your admin to add one.', 'error'); return; }
+    state.societyId = id;
+    saveState();
+    document.getElementById('residentSocietyName').textContent = `${data.flats.length} flat(s) found. Pick yours below.`;
+    document.getElementById('residentFlatPicks').innerHTML = data.flats.map(f => `
+      <button type="button" class="flat-pick" onclick="pickFlat('${f._id}','${esc(f.block)}-${esc(f.flatNumber)}', this)">
+        ${esc(f.block)} - ${esc(f.flatNumber)} <small>Floor ${f.floor}${f.owner ? ' · Already linked to a resident' : ' · Available'}</small>
+      </button>`).join('');
+    showOnboardStep('stepResidentFlat');
+  }catch(err){ toast('Could not find that Society ID. Double-check and try again.', 'error'); }
+  finally{ btn.disabled = false; btn.textContent = 'Find my flat'; }
+}
+function pickFlat(id, label, el){
+  pickedFlat = { id, label };
+  document.querySelectorAll('.flat-pick').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('confirmFlatBtn').disabled = false;
+}
+
+function finishOnboarding(){
+  if(state.user.role === 'resident' && pickedFlat){
+    state.flatId = pickedFlat.id;
+    state.flatLabel = pickedFlat.label;
+  }
+  saveState();
+  enterApp();
+}
+
+function enterApp(){
+  document.getElementById('onboardScreen').style.display = 'none';
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('appShell').style.display = 'flex';
+
+  const isAdmin = state.user.role === 'admin';
+  document.getElementById('navDashboard').style.display = isAdmin ? 'flex' : 'none';
+  document.getElementById('navFlats').style.display = isAdmin ? 'flex' : 'none';
+  document.getElementById('raiseComplaintBtn').style.display = isAdmin ? 'none' : 'inline-flex';
+  document.getElementById('adminFilters').style.display = isAdmin ? 'flex' : 'none';
+  document.getElementById('noticeCreatePanel').style.display = isAdmin ? 'block' : 'none';
+  document.getElementById('navComplaintsLabel').textContent = isAdmin ? 'Complaints' : 'My complaints';
+  document.getElementById('complaintsPanelTitle').textContent = isAdmin ? 'All complaints' : 'My complaints';
+
+  document.getElementById('userName').textContent = state.user.fullName;
+  document.getElementById('userAvatar').textContent = state.user.fullName.charAt(0).toUpperCase();
+  document.getElementById('userRoleBadge').textContent = state.user.role;
+  document.getElementById('sidebarSociety').innerHTML = `<b>${esc(state.societyName || 'Your society')}</b>${state.flatLabel ? 'Flat ' + esc(state.flatLabel) : 'Administrator'}`;
+
+  showView(isAdmin ? 'dashboardView' : 'complaintsView', isAdmin ? 'navDashboard' : 'navComplaints');
+  loadEverything();
+}
+
+function showView(viewId, navId){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(viewId).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const nav = document.getElementById(navId);
+  if(nav) nav.classList.add('active');
+  const titles = { dashboardView:'Dashboard', complaintsView: state.user.role==='admin' ? 'Complaints' : 'My complaints', noticesView:'Notice board', flatsView:'Flats' };
+  document.getElementById('topbarTitle').textContent = titles[viewId] || '';
+  if(viewId === 'dashboardView') loadDashboard();
+  if(viewId === 'flatsView') loadFlats();
+}
+
+async function loadEverything(){
+  await Promise.all([loadComplaints(), loadNotices()]);
+  if(state.user.role === 'admin') loadDashboard();
+}
+
+async function loadDashboard(){
+  try{
+    const data = await api('/complaints/dashboard/' + state.societyId);
+    const d = data.dashboard;
+    document.getElementById('statGrid').innerHTML = `
+      ${statCard(d.totalComplaints,'Total complaints','')}
+      ${statCard(d.pending,'Pending','accent-warning')}
+      ${statCard(d.inProgress,'In progress','')}
+      ${statCard(d.resolved,'Resolved','accent-success')}
+      ${statCard(d.overdue,'Overdue','accent-danger')}
+      ${statCard(d.highPriority,'High priority','accent-warning')}
+    `;
+    document.getElementById('recentComplaints').innerHTML = complaints.slice(0,4).map(complaintRowHtml).join('') || emptyState('📭','No complaints yet','Complaints raised by residents will show up here.');
+  }catch(err){ toast(err.message, 'error'); }
+}
+function statCard(num, label, accent){
+  return `<div class="stat-card ${accent}"><div class="num">${num}</div><div class="lbl">${label}</div></div>`;
+}
+
+async function loadComplaints(){
+  try{
+    const data = await api('/complaints/' + state.societyId);
+    complaints = data.complaints;
+    if(state.user.role !== 'admin'){
+      complaints = complaints.filter(c => c.resident && c.resident._id === state.user.id);
+    }
+    renderComplaints();
+  }catch(err){ toast(err.message, 'error'); }
+}
+
+function renderComplaints(){
+  let list = [...complaints];
+  if(state.user.role === 'admin'){
+    const s = document.getElementById('filterStatus').value;
+    const p = document.getElementById('filterPriority').value;
+    const o = document.getElementById('filterOverdue').value;
+    if(s) list = list.filter(c => c.status === s);
+    if(p) list = list.filter(c => c.priority === p);
+    if(o === 'yes') list = list.filter(c => c.isOverdue && c.status !== 'Resolved');
+    list.sort((a,b) => (b.isOverdue - a.isOverdue) || (new Date(b.createdAt) - new Date(a.createdAt)));
+  }
+  const html = list.map(complaintRowHtml).join('');
+  document.getElementById('complaintsList').innerHTML = html || emptyState(
+    '🛠️',
+    state.user.role === 'admin' ? 'No complaints match these filters' : 'No complaints yet',
+    state.user.role === 'admin' ? 'Try adjusting your filters above.' : 'Raised an issue? Use the button above to log it.'
+  );
+}
+
+function complaintRowHtml(c){
+  const isAdmin = state.user.role === 'admin';
+  const overdue = c.isOverdue && c.status !== 'Resolved';
+  const flatLabel = c.flat ? `${c.flat.block}-${c.flat.flatNumber}` : '';
+  const historyOpen = expandedHistory[c._id];
+  return `
+  <div class="complaint-row ${overdue ? 'overdue' : ''}">
+    <div class="complaint-top">
+      <div style="flex:1">
+        <div class="complaint-title">${esc(c.title)}</div>
+        <div class="complaint-meta">${flatLabel ? flatLabel + ' · ' : ''}${isAdmin && c.resident ? esc(c.resident.fullName) + ' · ' : ''}${timeAgo(c.createdAt)}</div>
+        <div class="complaint-desc">${esc(c.description)}</div>
+      </div>
+      ${c.photo ? `<img class="photo-thumb" src="${c.photo}" alt="Complaint photo" />` : ''}
+    </div>
+    <div class="complaint-badges" style="margin-top:10px">
+      <span class="badge badge-${c.status.replace(' ','')}">${c.status}</span>
+      <span class="badge badge-${c.priority}">${c.priority}</span>
+      ${overdue ? '<span class="badge badge-overdue">⏰ Overdue</span>' : ''}
+    </div>
+    <button class="toggle-history" onclick="toggleHistory('${c._id}')">${historyOpen ? 'Hide' : 'View'} status history (${c.statusHistory.length})</button>
+    <div class="history-panel ${historyOpen ? 'open' : ''}" id="hist-${c._id}">
+      ${c.statusHistory.map(h => `
+        <div class="history-item">
+          <div class="history-dot"></div>
+          <div><b>${h.status}</b>${h.remarks ? ' — ' + esc(h.remarks) : ''}<div class="hmeta">${new Date(h.changedAt).toLocaleString()}</div></div>
+        </div>`).join('')}
+    </div>
+    ${isAdmin ? `
+    <div class="status-update-row">
+      <select id="statusSel-${c._id}">
+        ${['Pending','Assigned','In Progress','Resolved','Closed'].map(s => `<option ${s===c.status?'selected':''}>${s}</option>`).join('')}
+      </select>
+      <input type="text" id="statusNote-${c._id}" placeholder="Add a note (optional)" style="flex:1;min-width:140px" />
+      <button class="btn btn-outline btn-sm" onclick="updateStatus('${c._id}')">Update status</button>
+    </div>` : ''}
+  </div>`;
+}
+function toggleHistory(id){
+  expandedHistory[id] = !expandedHistory[id];
+  renderComplaints();
+}
+async function updateStatus(id){
+  const status = document.getElementById('statusSel-'+id).value;
+  const remarks = document.getElementById('statusNote-'+id).value.trim();
+  try{
+    await api('/complaints/'+id+'/status', { method:'PATCH', body:{ status, remarks }});
+    toast('Status updated.', 'success');
+    await loadComplaints();
+    if(document.getElementById('dashboardView').classList.contains('active')) loadDashboard();
+  }catch(err){ toast(err.message, 'error'); }
+}
+
+/* ---- Raise complaint modal ---- */
+function openComplaintModal(){
+  document.getElementById('complaintModal').classList.add('open');
+}
+function closeComplaintModal(){
+  document.getElementById('complaintModal').classList.remove('open');
+  document.getElementById('cTitle').value='';
+  document.getElementById('cDesc').value='';
+  document.getElementById('cDueDate').value='';
+  document.getElementById('cPhoto').value='';
+  document.getElementById('cPriority').value='Medium';
+}
+async function submitComplaint(){
+  const title = document.getElementById('cTitle').value.trim();
+  const description = document.getElementById('cDesc').value.trim();
+  if(!title || !description){ toast('Add a title and description.', 'error'); return; }
+  const btn = document.getElementById('submitComplaintBtn');
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  try{
+    const fd = new FormData();
+    fd.append('title', title);
+    fd.append('description', description);
+    fd.append('societyId', state.societyId);
+    fd.append('flatId', state.flatId);
+    fd.append('priority', document.getElementById('cPriority').value);
+    const due = document.getElementById('cDueDate').value;
+    if(due) fd.append('dueDate', due);
+    const photo = document.getElementById('cPhoto').files[0];
+    if(photo) fd.append('photo', photo);
+    await api('/complaints/create', { method:'POST', body:fd, isForm:true });
+    toast('Complaint submitted.', 'success');
+    closeComplaintModal();
+    await loadComplaints();
+  }catch(err){ toast(err.message, 'error'); }
+  finally{ btn.disabled = false; btn.textContent = 'Submit complaint'; }
+}
+
+async function loadNotices(){
+  try{
+    const data = await api('/notices/' + state.societyId);
+    notices = data.notices;
+    notices.sort((a,b) => (b.isImportant - a.isImportant) || (new Date(b.createdAt) - new Date(a.createdAt)));
+    renderNotices();
+  }catch(err){ /* society may not exist yet for resident before onboarding completes */ }
+}
+function renderNotices(){
+  document.getElementById('noticesList').innerHTML = notices.map(n => `
+    <div class="notice-item ${n.isImportant ? 'important' : ''}">
+      <div class="notice-title">${n.isImportant ? '<span class="badge badge-pin">📌 Important</span>' : ''}${esc(n.title)}</div>
+      <div class="notice-desc">${esc(n.description)}</div>
+      <div class="notice-meta">
+        Posted by ${n.createdBy ? esc(n.createdBy.fullName) : 'Admin'} · ${timeAgo(n.createdAt)}
+        ${state.user.role === 'admin' ? ` · <a href="#" onclick="deleteNotice('${n._id}');return false;" style="color:var(--danger);font-weight:600">Delete</a>` : ''}
+      </div>
+    </div>
+  `).join('') || emptyState('📋','No notices yet', state.user.role==='admin' ? 'Post your first notice using the form above.' : 'Your society admin hasn\'t posted anything yet.');
+}
+async function postNotice(){
+  const title = document.getElementById('noticeTitle').value.trim();
+  const description = document.getElementById('noticeDesc').value.trim();
+  if(!title || !description){ toast('Add a title and description.', 'error'); return; }
+  const btn = document.getElementById('postNoticeBtn');
+  btn.disabled = true; btn.textContent = 'Posting…';
+  try{
+    await api('/notices/create', { method:'POST', body:{
+      title, description, societyId: state.societyId,
+      isImportant: document.getElementById('noticeImportant').checked,
+    }});
+    toast('Notice posted.', 'success');
+    document.getElementById('noticeTitle').value='';
+    document.getElementById('noticeDesc').value='';
+    document.getElementById('noticeImportant').checked=false;
+    await loadNotices();
+  }catch(err){ toast(err.message, 'error'); }
+  finally{ btn.disabled = false; btn.textContent = 'Post notice'; }
+}
+async function deleteNotice(id){
+  if(!confirm('Delete this notice?')) return;
+  try{
+    await api('/notices/'+id, { method:'DELETE' });
+    toast('Notice deleted.', 'success');
+    await loadNotices();
+  }catch(err){ toast(err.message, 'error'); }
+}
+
+async function loadFlats(){
+  try{
+    const data = await api('/flats/' + state.societyId);
+    flats = data.flats;
+    document.getElementById('flatsList').innerHTML = flats.map(f => `
+      <div class="complaint-row">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><b>${esc(f.block)}-${esc(f.flatNumber)}</b> · Floor ${f.floor}</div>
+          <span class="badge ${f.owner ? 'badge-Resolved' : 'badge-Pending'}">${f.owner ? 'Linked to ' + esc(f.owner.fullName) : 'Available'}</span>
+        </div>
+      </div>
+    `).join('') || emptyState('🏢','No flats yet','Add your first flat using the form above.');
+  }catch(err){ toast(err.message, 'error'); }
+}
+async function addFlatManage(){
+  const block = document.getElementById('mgFlatBlock').value.trim();
+  const flatNumber = document.getElementById('mgFlatNumber').value.trim();
+  const floor = document.getElementById('mgFlatFloor').value;
+  if(!block || !flatNumber || floor===''){ toast('Fill in all fields.', 'error'); return; }
+  try{
+    await api('/flats/create', { method:'POST', body:{ block, flatNumber, floor:Number(floor), societyId: state.societyId }});
+    document.getElementById('mgFlatBlock').value='';
+    document.getElementById('mgFlatNumber').value='';
+    document.getElementById('mgFlatFloor').value='';
+    toast('Flat added.', 'success');
+    loadFlats();
+  }catch(err){ toast(err.message, 'error'); }
+}
+
+function esc(str){
+  if(str === undefined || str === null) return '';
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function timeAgo(dateStr){
+  const diff = (Date.now() - new Date(dateStr)) / 1000;
+  if(diff < 60) return 'just now';
+  if(diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if(diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+function emptyState(ico, title, sub){
+  return `<div class="empty-state"><div class="ico">${ico}</div><h4>${title}</h4><p>${sub}</p></div>`;
+}
+
+(function init(){
+  if(state.token && state.user){
+    document.getElementById('authScreen').style.display = 'none';
+    if(state.societyId && (state.user.role === 'admin' || state.flatId)){
+      enterApp();
+    } else {
+      afterAuth();
+    }
+  }
+})();
+</script>
+</body>
+</html>
