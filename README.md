@@ -58,8 +58,7 @@ https://github.com/VANSHKALRA88/Society-maintenance-tracker
 # 🛠 Tech Stack
 
 ## Frontend
-- React.js
-- React Router
+- Html
 - Axios
 - CSS
 
