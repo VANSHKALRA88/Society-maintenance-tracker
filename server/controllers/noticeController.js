@@ -1,5 +1,6 @@
 const Notice = require("../models/notice");
 const Society = require("../models/society");
+const { sendNoticeEmail } = require("../services/emailService");
 
 const createNotice = async (req, res) => {
 
@@ -39,6 +40,23 @@ const createNotice = async (req, res) => {
             isImportant,
 
         });
+
+        const User = require("../models/user");
+
+const residents = await User.find({
+    society: societyId,
+    role: "resident",
+}).select("email");
+
+for (const resident of residents) {
+    if (resident.email) {
+        await sendNoticeEmail(
+            resident.email,
+            notice.title,
+            notice.description
+        );
+    }
+}
 
         res.status(201).json({
 

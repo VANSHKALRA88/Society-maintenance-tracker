@@ -2,6 +2,7 @@ const Complaint = require("../models/complaint");
 const Society = require("../models/society");
 const Flat = require("../models/flat");
 const cloudinary = require("../config/cloudinary");
+const { sendStatusEmail } = require("../services/emailService");
 
 const createComplaint = async (req, res) => {
     try {
@@ -181,6 +182,18 @@ const updateComplaintStatus = async (req, res) => {
         });
 
         await complaint.save();
+
+        const populatedComplaint = await Complaint.findById(complaint._id)
+    .populate("resident", "email")
+    .populate("flat");
+
+if (populatedComplaint.resident?.email) {
+    await sendStatusEmail(
+        populatedComplaint.resident.email,
+        populatedComplaint.title,
+        populatedComplaint.status
+    );
+}
 
         res.status(200).json({
 
