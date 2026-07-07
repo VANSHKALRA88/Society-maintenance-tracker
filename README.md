@@ -12,7 +12,7 @@ https://society-maintenance-tracker-xbwv.vercel.app
 ---
 
 ## How It Works 
-github.com/VANSHKALRA88/Society-maintenance-tracker/blob/main/HOW_IT_WORKS.md
+https://github.com/VANSHKALRA88/Society-maintenance-tracker/blob/main/HOW_IT_WORKS.md
 
 ---
 
