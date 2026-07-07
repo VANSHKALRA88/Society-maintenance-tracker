@@ -6,14 +6,8 @@ A full-stack Society Maintenance Tracker developed using the MERN stack. The pro
 
 ## 🌐 Live Demo
 
-### Frontend (Vercel)
+### Link (Vercel)
 https://society-maintenance-tracker-xbwv.vercel.app
-
-### Backend API (Render)
-https://society-maintenance-tracker-jgmu.onrender.com
-
-### GitHub Repository
-https://github.com/VANSHKALRA88/Society-maintenance-tracker
 
 ---
 
@@ -58,8 +52,7 @@ https://github.com/VANSHKALRA88/Society-maintenance-tracker
 # 🛠 Tech Stack
 
 ## Frontend
-- React.js
-- React Router
+- Html
 - Axios
 - CSS
 
